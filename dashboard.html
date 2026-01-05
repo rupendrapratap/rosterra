@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Data Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body class="dashboard-body">
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>Data Management System</h2>
+            </div>
+            <div class="nav-user">
+                <button class="btn-logout" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <h1>Data Management Dashboard</h1>
+                <div class="data-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Total Records:</span>
+                        <span class="stat-value" id="totalRecords">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Selected:</span>
+                        <span class="stat-value" id="selectedRecords">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload Section -->
+            <div class="upload-section">
+                <div class="upload-card">
+                    <h3>📤 Upload Excel File</h3>
+                    <p>Upload an Excel (.xlsx, .xls) file to import data</p>
+                    <input type="file" id="excelFileInput" accept=".xlsx,.xls" style="display: none;">
+                    <button class="btn btn-primary" onclick="document.getElementById('excelFileInput').click()">
+                        Choose Excel File
+                    </button>
+                    <span id="fileName" class="file-name"></span>
+                </div>
+                
+                <div class="action-buttons-top">
+                    <button class="btn btn-secondary" id="addDataBtn">➕ Add Data Manually</button>
+                    <button class="btn btn-primary" id="exportSelectedBtn" disabled>📥 Export Selected</button>
+                    <button class="btn btn-secondary" id="exportAllBtn">📥 Export All</button>
+                    <button class="btn btn-danger" id="clearDataBtn">🗑️ Clear All Data</button>
+                </div>
+            </div>
+
+            <!-- Filters Section -->
+            <div class="filters-section">
+                <h3>🔍 Filter Data</h3>
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label for="filterName">Name</label>
+                        <input type="text" id="filterName" placeholder="Search by name...">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterAge">Age</label>
+                        <select id="filterAge">
+                            <option value="">All Ages</option>
+                            <option value="0-18">0-18</option>
+                            <option value="19-30">19-30</option>
+                            <option value="31-45">31-45</option>
+                            <option value="46-60">46-60</option>
+                            <option value="60+">60+</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterContentType">Content Type</label>
+                        <input type="text" id="filterContentType" placeholder="Filter by content type...">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterCity">City</label>
+                        <input type="text" id="filterCity" placeholder="Filter by city...">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterState">State</label>
+                        <input type="text" id="filterState" placeholder="Filter by state...">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterGender">Gender</label>
+                        <select id="filterGender">
+                            <option value="">All Genders</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" id="clearFiltersBtn">Clear Filters</button>
+            </div>
+
+            <!-- Data Table Section -->
+            <div class="table-section">
+                <div class="table-header">
+                    <h3>Data Table</h3>
+                    <div class="table-controls">
+                        <label class="select-all-label">
+                            <input type="checkbox" id="selectAllCheckbox">
+                            <span>Select All</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="data-table" id="dataTable">
+                        <thead>
+                            <tr>
+                                <th class="checkbox-col">
+                                    <input type="checkbox" id="selectAllHeader">
+                                </th>
+                                <th>Name</th>
+                                <th>Age</th>
+                                <th>Gender</th>
+                                <th>Content Type</th>
+                                <th>City</th>
+                                <th>State</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <tr>
+                                <td colspan="8" class="empty-message">
+                                    No data available. Upload an Excel file or add data manually.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Data Modal -->
+    <div class="modal" id="dataModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Data</h3>
+                <span class="modal-close" id="closeModal">&times;</span>
+            </div>
+            <form id="dataForm" class="data-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="inputName">Name *</label>
+                        <input type="text" id="inputName" required placeholder="Enter name">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputAge">Age *</label>
+                        <input type="number" id="inputAge" required min="0" max="150" placeholder="Enter age">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="inputGender">Gender *</label>
+                        <select id="inputGender" required>
+                            <option value="">Select gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputContentType">Content Type *</label>
+                        <input type="text" id="inputContentType" required placeholder="Enter content type">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="inputCity">City *</label>
+                        <input type="text" id="inputCity" required placeholder="Enter city">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputState">State *</label>
+                        <input type="text" id="inputState" required placeholder="Enter state">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
+
+

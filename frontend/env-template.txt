@@ -1,0 +1,6 @@
+REACT_APP_API_URL=http://localhost:5000
+
+NOTE: Copy this file and rename it to .env
+If .env already exists, you can skip this step.
+
+

@@ -1,0 +1,8 @@
+MONGODB_URI=mongodb+srv://mayankjadon939:Sarvesh@191928@cluster0.hx5zn5w.mongodb.net/
+JWT_SECRET=your-super-secret-jwt-key-change-in-production-12345
+PORT=5000
+
+NOTE: Copy this file and rename it to .env
+If .env already exists, you can skip this step.
+
+
